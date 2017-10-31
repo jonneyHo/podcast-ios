@@ -448,7 +448,7 @@
 				956D85121E51926800D95F7A /* EndpointRequestQueue.swift */,
 				D3C6E3E01EBBF4400018DE45 /* FetchFeedEndpointRequest.swift */,
 				95FD28F71E77B55200A52506 /* ChangeUsernameEndpointRequest.swift */,
-				FDECB3DB1F9ECBF7009FC18F /* Subscribtions */,
+				FDECB3DB1F9ECBF7009FC18F /* Subscriptions */,
 				FDECB3DC1F9ECC19009FC18F /* Follows */,
 				FDECB3DD1F9ECC28009FC18F /* Bookmarks */,
 				FDECB3DE1F9ECC36009FC18F /* Recommendations */,
@@ -659,14 +659,14 @@
 			name = FetchByID;
 			sourceTree = "<group>";
 		};
-		FDECB3DB1F9ECBF7009FC18F /* Subscribtions */ = {
+		FDECB3DB1F9ECBF7009FC18F /* Subscriptions */ = {
 			isa = PBXGroup;
 			children = (
 				D38C199A1E90905900BC0ADC /* FetchUserSubscriptionsEndpointRequest.swift */,
 				D307616B1E8CCA000047EA6F /* CreateUserSubscriptioEndpointRequest.swift */,
 				D307616D1E8CCEFC0047EA6F /* DeleteUserSubscriptionEndpointRequest.swift */,
 			);
-			name = Subscribtions;
+			name = Subscriptions;
 			sourceTree = "<group>";
 		};
 		FDECB3DC1F9ECC19009FC18F /* Follows */ = {
@@ -1312,7 +1312,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 79AC6EAE19760327EA7EFEA7 /* Pods-Podcast.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Podcast/Podcast.entitlements;
@@ -1337,7 +1336,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 656B6E018BE7322B85C4C81E /* Pods-Podcast.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Podcast/Podcast.entitlements;
