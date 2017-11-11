@@ -11,7 +11,6 @@ import NVActivityIndicatorView
 
 class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate, UITableViewDelegate, UITableViewDataSource, TagsCollectionViewDataSource, EpisodeTableViewCellDelegate, NVActivityIndicatorViewable  {
     
-    let seriesHeaderViewMinHeight: CGFloat = SeriesDetailHeaderView.minHeight
     let sectionHeaderHeight: CGFloat = 12.5
     let sectionTitleY: CGFloat = 32.0
     let sectionTitleHeight: CGFloat = 18.0
@@ -38,7 +37,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        seriesHeaderView = SeriesDetailHeaderView(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.width, height: seriesHeaderViewMinHeight))
+        seriesHeaderView = SeriesDetailHeaderView()
         seriesHeaderView.delegate = self
         seriesHeaderView.dataSource = self
         seriesHeaderView.isHidden = true
@@ -49,6 +48,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         episodeTableView.backgroundColor = .paleGrey
         episodeTableView.dataSource = self
         episodeTableView.tableHeaderView = seriesHeaderView
+
         episodeTableView.showsVerticalScrollIndicator = false
         episodeTableView.separatorStyle = .none
         episodeTableView.addInfiniteScroll { (tableView) -> Void in
@@ -72,7 +72,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         }
         
         loadingAnimation = createLoadingAnimationView()
-        view.addSubview(loadingAnimation)
+        seriesHeaderView.addSubview(loadingAnimation)
         
         loadingAnimation.snp.makeConstraints { make in
             make.center.equalTo(seriesHeaderView)
@@ -83,6 +83,16 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         if let series = series {
             setSeries(series: series)
         }
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        seriesHeaderView.setNeedsLayout()
+        seriesHeaderView.layoutIfNeeded()
+        let height = seriesHeaderView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+        seriesHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: height)
+        episodeTableView.tableHeaderView = seriesHeaderView
+        episodeTableView.layoutIfNeeded()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -164,6 +174,10 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
     }
     
     // MARK: - TableView
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return seriesHeaderView
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return episodes.count

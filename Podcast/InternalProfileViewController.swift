@@ -49,7 +49,7 @@ class InternalProfileViewController: ViewController, UITableViewDelegate, UITabl
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
-    
+
     // MARK: InternalProfileHeaderViewDelegate
     
     func internalProfileHeaderViewDidPressViewProfile(internalProfileHeaderView: InternalProfileHeaderView) {

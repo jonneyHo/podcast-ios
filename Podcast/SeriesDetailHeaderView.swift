@@ -44,7 +44,6 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
     let titleLabelWidth: CGFloat = 259.5
     let titleLabelHeight: CGFloat = 30
     let publisherLabelOffset: CGFloat = 1
-    let publisherLabelHeight: CGFloat = 21
     let viewSeparatorHeight: CGFloat = 1
     let viewSeparatorTopOffset: CGFloat = 18
     let viewSeparatorInset: CGFloat = 18
@@ -71,15 +70,15 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
     weak var dataSource: TagsCollectionViewDataSource?
     weak var delegate: SeriesDetailHeaderViewDelegate?
         
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init() {
+        super.init(frame: .zero)
 
         infoView = UIView()
         infoView.backgroundColor = .offWhite
         infoView.clipsToBounds = true
         addSubview(infoView)
         
-        backgroundImageView = ImageView(frame: frame)
+        backgroundImageView = ImageView(frame: CGRect(x: 0.0, y: 0.0, width: 1, height: 1)) //placeholder
         backgroundImageView.contentMode = .scaleAspectFill
         infoView.addSubview(backgroundImageView)
 
@@ -93,11 +92,13 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
         titleLabel.textColor = .offBlack
         titleLabel.font = ._20SemiboldFont()
         titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 0 // used so autolayout makes it as big as it needs to be
         infoView.addSubview(titleLabel)
         
         publisherLabel = UILabel()
         publisherLabel.font = ._14RegularFont()
         publisherLabel.textColor = .charcoalGrey
+        publisherLabel.numberOfLines = 0
         publisherLabel.textAlignment = .center
         infoView.addSubview(publisherLabel)
         
@@ -126,8 +127,6 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
         episodeSeparator.backgroundColor = .paleGrey
         infoView.addSubview(episodeSeparator)
         
-        addSubview(infoView)
-        
         infoView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -149,14 +148,13 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(imageView.snp.bottom).offset(titleLabelTopOffset)
-            make.width.equalTo(titleLabelWidth)
-            make.height.equalTo(titleLabelHeight)
+            make.leading.trailing.equalToSuperview().inset(padding)
         }
         
         publisherLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(publisherLabelOffset)
-            make.height.equalTo(publisherLabelHeight)
+            make.leading.trailing.equalToSuperview().inset(padding)
         }
         
         subscribeButton.snp.makeConstraints { make in
@@ -174,17 +172,20 @@ class SeriesDetailHeaderView: UIView, UICollectionViewDelegate, UICollectionView
         }
 
         tagsCollectionView.snp.makeConstraints { make in
-            make.width.equalToSuperview()
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(tagsViewHeight)
             make.top.equalTo(viewSeparator.snp.bottom).offset(tagsViewTopOffset)
         }
         
         episodeSeparator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
             make.height.equalTo(episodeSeparatorHeight)
-            make.width.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
             make.top.equalTo(tagsCollectionView.snp.bottom).offset(tagsViewTopOffset)
+            make.bottom.equalToSuperview()
+        }
+        
+        infoView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
