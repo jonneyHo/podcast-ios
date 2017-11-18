@@ -15,15 +15,19 @@ class GradientView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .clear
-        gradientLayer.frame = self.frame
-        gradientLayer.colors = [UIColor.gradientWhite.withAlphaComponent(0.9).cgColor, UIColor.gradientWhite.cgColor]
-        self.layer.addSublayer(gradientLayer)
+        gradientLayer.frame = frame
+        gradientLayer.colors = [UIColor.gradientWhite.withAlphaComponent(0.85).cgColor, UIColor.gradientWhite.cgColor]
+        gradientLayer.locations = [0.0, 0.5]
+        layer.addSublayer(gradientLayer)
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
 
-        gradientLayer.frame = frame
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        gradientLayer.frame = bounds
+        CATransaction.commit()
     }
     
     required init?(coder aDecoder: NSCoder) {

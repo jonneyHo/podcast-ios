@@ -12,7 +12,7 @@ protocol SeriesSubjectViewDelegate: class {
     func seriesSubjectViewDidPressSubscribeButton(seriesSubjectView: SeriesSubjectView)
 }
 
-class SeriesSubjectView: FeedElementSubjectView {
+class SeriesSubjectView: UIView {
     
     ///
     /// Mark: Variables
@@ -28,16 +28,17 @@ class SeriesSubjectView: FeedElementSubjectView {
     // Mark: Constants
     let separatorHeight: CGFloat = 9
     let seriesImageSize: CGFloat = 165
+    let seriesImageWidthMultiplier: CGFloat = 0.44
     let padding: CGFloat = 18
     let smallPadding: CGFloat = 4
-    let subscribeButtonWidth: CGFloat = 123
-    let subscribeButtonHeight: CGFloat = 34
+    let subscribeButtonSize: CGSize = CGSize(width: 123, height: 34)
     let subscribeButtonBottomPadding: CGFloat = 24
     let subscribeButtonTopPadding: CGFloat = 50
     
     
-    override init() {
-        super.init()
+    init() {
+        super.init(frame: .zero)
+        
         backgroundColor = .offWhite
         
         seriesImageView = ImageView(frame: CGRect(x: 0, y: 0, width: seriesImageSize, height: seriesImageSize))
@@ -68,9 +69,9 @@ class SeriesSubjectView: FeedElementSubjectView {
         addSubview(separator)
         
         seriesImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(padding)
-            make.size.equalTo(seriesImageSize)
-            make.centerY.equalToSuperview()
+            make.top.leading.equalToSuperview().offset(padding)
+            make.width.equalToSuperview().multipliedBy(seriesImageWidthMultiplier)
+            make.height.equalTo(seriesImageView.snp.width)
         }
         
         seriesNameLabel.snp.makeConstraints { make in
@@ -93,8 +94,7 @@ class SeriesSubjectView: FeedElementSubjectView {
         
         subscribeButton.snp.makeConstraints { make in
             make.leading.equalTo(seriesNameLabel.snp.leading)
-            make.width.equalTo(subscribeButtonWidth)
-            make.height.equalTo(subscribeButtonHeight)
+            make.size.equalTo(subscribeButtonSize)
             make.bottom.equalToSuperview().inset(subscribeButtonBottomPadding + separatorHeight)
         }
     
@@ -114,8 +114,8 @@ class SeriesSubjectView: FeedElementSubjectView {
         seriesImageView.setImageAsynchronouslyWithDefaultImage(url: series.largeArtworkImageURL)
         seriesNameLabel.text = series.title
         updateViewWithSubscribeState(isSubscribed: series.isSubscribed, numberOfSubscribers: series.numberOfSubscribers)
-        lastUpdatedLabel.text = "Last updated " + series.lastUpdatedAsString()
-        tagsLabel.text = series.allTags()
+        lastUpdatedLabel.text = "Last updated " + series.lastUpdatedString
+        tagsLabel.text = series.tagString
     }
     
     required init?(coder aDecoder: NSCoder) {

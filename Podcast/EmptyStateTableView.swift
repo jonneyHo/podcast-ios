@@ -5,7 +5,6 @@
 //  Created by Natasha Armbrust on 10/25/17.
 //  Copyright © 2017 Cornell App Development. All rights reserved.
 //
-
 import UIKit
 import NVActivityIndicatorView
 
@@ -23,7 +22,8 @@ class EmptyStateTableView: UITableView, EmptyStateViewDelegate {
     var loadingAnimation: NVActivityIndicatorView!
     weak var emptyStateTableViewDelegate: EmptyStateTableViewDelegate?
     
-    init(frame: CGRect, type: EmptyStateType) {
+    // isRefreshable Boolean indicating whether this tableView has a UIRefreshControl
+    init(frame: CGRect, type: EmptyStateType, isRefreshable: Bool = false) {
         self.type = type
         super.init(frame: frame, style: .plain)
         emptyStateView = EmptyStateView(type: type)
@@ -33,11 +33,18 @@ class EmptyStateTableView: UITableView, EmptyStateViewDelegate {
         showsVerticalScrollIndicator = false
         separatorStyle = .none
         backgroundColor = .clear
-
-        loadingAnimation = createLoadingAnimationView()
+        
+        loadingAnimation = LoadingAnimatorUtilities.createLoadingAnimator()
         backgroundView!.addSubview(loadingAnimation)
-        loadingAnimation.center = backgroundView!.center
+        loadingAnimation.snp.makeConstraints { make in
+            make.center.equalToSuperview().priority(999)
+        }
         loadingAnimation.startAnimating()
+        
+        if isRefreshable {
+            refreshControl = UIRefreshControl()
+            refreshControl!.tintColor = .sea
+        }
     }
     
     override func layoutSubviews() {
@@ -55,7 +62,6 @@ class EmptyStateTableView: UITableView, EmptyStateViewDelegate {
     
     func stopLoadingAnimation() {
         loadingAnimation.stopAnimating()
-        emptyStateView.mainView.isHidden = false
     }
     
     func startLoadingAnimation() {
@@ -71,13 +77,21 @@ class EmptyStateTableView: UITableView, EmptyStateViewDelegate {
         emptyStateTableViewDelegate?.didPressEmptyStateViewActionItem()
     }
     
-    //this is a function extension because NVActivityIndicatorView is a final class so it cannot be subclassed
-    func createLoadingAnimationView() -> NVActivityIndicatorView {
-        let width: CGFloat = 30
-        let height: CGFloat = 30
-        let color: UIColor = .sea
-        let type: NVActivityIndicatorType = .ballTrianglePath
-        let frame = CGRect(x: 0, y: 0, width: width, height: height)
-        return NVActivityIndicatorView(frame: frame, type: type, color: color, padding: 0)
+    //MARK
+    //MARK: Refresh Control Functions
+    //MARK
+    
+    func endRefreshing() {
+        if let control = refreshControl {
+            if control.isRefreshing {
+                DispatchTime.waitFor(milliseconds: 500, completion: { self.refreshControl?.endRefreshing() } )
+            }
+        }
+    }
+    
+    func beginRefreshing() {
+        if let control = refreshControl {
+            if !control.isRefreshing { control.beginRefreshing() }
+        }
     }
 }

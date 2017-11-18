@@ -4,16 +4,17 @@ import UIKit
 protocol MiniPlayerViewDelegate: class {
     func miniPlayerViewDidTapPlayPauseButton()
     func miniPlayerViewDidTapExpandButton()
+    func miniPlayerViewDidDrag(sender: UIPanGestureRecognizer)
 }
 
 class MiniPlayerView: UIView {
     
     let miniPlayerHeight: CGFloat = 60.5
     let marginSpacing: CGFloat = 17
-    let buttonSize: CGSize = CGSize(width: 15, height: 18)
+    let buttonSize: CGSize = CGSize(width: 18, height: 21.6)
     let buttonTrailingInset: CGFloat = 18
     let arrowYValue: CGFloat = 19.5
-    let arrowSize: CGSize = CGSize(width: 14, height: 7)
+    let arrowSize: CGSize = CGSize(width: 17, height: 8.5)
     let titleLabelYValue: CGFloat = 14
     let labelLeadingOffset: CGFloat = 17
     let labelTrailingInset: CGFloat = 60.5
@@ -34,7 +35,7 @@ class MiniPlayerView: UIView {
         super.init(frame: frame)
         
         self.frame.size.height = miniPlayerHeight
-        backgroundColor = .gradientWhite
+        backgroundColor = UIColor.gradientWhite.withAlphaComponent(0.85)
         
         if !UIAccessibilityIsReduceTransparencyEnabled() && transparentMiniPlayerEnabled {
             
@@ -52,7 +53,8 @@ class MiniPlayerView: UIView {
         miniPlayerSlider = UISlider(frame: .zero)
         miniPlayerSlider.minimumTrackTintColor = .sea
         miniPlayerSlider.maximumTrackTintColor = .silver
-        miniPlayerSlider.thumbTintColor = .clear
+        miniPlayerSlider.isUserInteractionEnabled = false
+        miniPlayerSlider.setThumbImage(UIImage(), for: .normal)
         addSubview(miniPlayerSlider)
         miniPlayerSlider.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -60,8 +62,8 @@ class MiniPlayerView: UIView {
             make.height.equalTo(miniPlayerSliderHeight)
         }
         
-        arrowButton = UIButton(frame: .zero)
-        arrowButton.setBackgroundImage(#imageLiteral(resourceName: "backArrowDown"), for: .normal)
+        arrowButton = Button()
+        arrowButton.setBackgroundImage(#imageLiteral(resourceName: "backArrow"), for: .normal)
         arrowButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
         arrowButton.addTarget(self, action: #selector(viewTapped), for: .touchUpInside)
         addSubview(arrowButton)
@@ -71,7 +73,7 @@ class MiniPlayerView: UIView {
             make.top.equalToSuperview().offset(arrowYValue)
         }
         
-        playPauseButton = UIButton(frame: .zero)
+        playPauseButton = Button()
         playPauseButton.adjustsImageWhenHighlighted = false
         playPauseButton.addTarget(self, action: #selector(playPauseButtonTapped), for: .touchUpInside)
         playPauseButton.setBackgroundImage(#imageLiteral(resourceName: "play_feed_icon_selected"), for: .selected)
@@ -108,8 +110,9 @@ class MiniPlayerView: UIView {
             make.trailing.equalTo(playPauseButton.snp.leading).offset(0 - labelTrailingInset)
             make.height.equalTo(labelHeight)
         }
-        
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(viewTapped)))
+
+        addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(viewTapped(_:))))
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(viewTapped(_:))))
     }
     
     func updateUIForPlayback(isPlaying: Bool) {
@@ -128,8 +131,12 @@ class MiniPlayerView: UIView {
         playPauseButton.setBackgroundImage(#imageLiteral(resourceName: "play_feed_icon"), for: .normal)
     }
     
-    @objc func viewTapped() {
-        delegate?.miniPlayerViewDidTapExpandButton()
+    @objc func viewTapped(_ sender: UIGestureRecognizer) {
+        if sender.isKind(of: UIPanGestureRecognizer.self) {
+            delegate?.miniPlayerViewDidDrag(sender: sender as! UIPanGestureRecognizer)
+        } else {
+            delegate?.miniPlayerViewDidTapExpandButton()
+        }
     }
     
     @objc func playPauseButtonTapped() {

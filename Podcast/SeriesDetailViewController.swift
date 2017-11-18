@@ -52,7 +52,9 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         episodeTableView.showsVerticalScrollIndicator = false
         episodeTableView.separatorStyle = .none
         episodeTableView.addInfiniteScroll { (tableView) -> Void in
-            self.fetchEpisodes()
+            if let seriesID = self.series?.seriesId {
+                self.fetchEpisodes(seriesID: seriesID)
+            }
         }
         //tells the infinite scroll when to stop
         episodeTableView.setShouldShowInfiniteScrollHandler { _ -> Bool in
@@ -61,7 +63,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         episodeTableView.register(EpisodeTableViewCell.self, forCellReuseIdentifier: "EpisodeTableViewCellIdentifier")
         mainScrollView = episodeTableView
 
-        episodeTableView.infiniteScrollIndicatorView = createLoadingAnimationView()
+        episodeTableView.infiniteScrollIndicatorView = LoadingAnimatorUtilities.createInfiniteScrollAnimator()
 
         view.addSubview(episodeTableView)
 
@@ -69,7 +71,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
             make.edges.equalToSuperview()
         }
         
-        loadingAnimation = createLoadingAnimationView()
+        loadingAnimation = LoadingAnimatorUtilities.createLoadingAnimator()
         view.addSubview(loadingAnimation)
         
         loadingAnimation.snp.makeConstraints { make in
@@ -102,8 +104,7 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         }
         
         System.endpointRequestQueue.addOperation(seriesBySeriesIdEndpointRequest)
-        
-        fetchEpisodes()
+        fetchEpisodes(seriesID: seriesID)
     }
     
     func updateSeriesHeader(series: Series) {
@@ -115,15 +116,14 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
     private func setSeries(series: Series) {
         self.loadingAnimation.stopAnimating()
         updateSeriesHeader(series: series)
-        fetchEpisodes()
+        fetchEpisodes(seriesID: series.seriesId)
     }
     
-    func fetchEpisodes() {
-        let episodesBySeriesIdEndpointRequest = FetchEpisodesForSeriesIDEndpointRequest(seriesID: String(series!.seriesId), offset: offset, max: pageSize)
+    func fetchEpisodes(seriesID: String) {
+        let episodesBySeriesIdEndpointRequest = FetchEpisodesForSeriesIDEndpointRequest(seriesID: seriesID, offset: offset, max: pageSize)
         episodesBySeriesIdEndpointRequest.success = { (endpointRequest: EndpointRequest) in
             guard let episodes = endpointRequest.processedResponseValue as? [Episode] else { return }
             if episodes.count == 0 {
-                self.episodeTableView.finishInfiniteScroll()
                 self.continueInfiniteScroll = false
             }
             self.episodes = self.episodes + episodes
@@ -131,6 +131,11 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
             self.episodeTableView.finishInfiniteScroll()
             self.episodeTableView.reloadData()
         }
+
+        episodesBySeriesIdEndpointRequest.failure = { _ in
+            self.episodeTableView.finishInfiniteScroll()
+        }
+        
         System.endpointRequestQueue.addOperation(episodesBySeriesIdEndpointRequest)
     }
     
@@ -188,6 +193,16 @@ class SeriesDetailViewController: ViewController, SeriesDetailHeaderViewDelegate
         let episodeViewController = EpisodeDetailViewController()
         episodeViewController.episode = episodes[indexPath.row]
         navigationController?.pushViewController(episodeViewController, animated: true)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scale: CGFloat = 50.0
+        let offset = max(0, -(scrollView.contentOffset.y + scrollView.adjustedContentInset.top))
+        let scaledOffset = offset / scale
+
+        seriesHeaderView.infoView.alpha = 1.0 - scaledOffset
+        seriesHeaderView.contentContainerTop?.update(offset: -offset)
+        seriesHeaderView.gradientView.alpha = 1.85 - scaledOffset * 0.75
     }
     
     // MARK: - TagsCollectionViewCellDataSource

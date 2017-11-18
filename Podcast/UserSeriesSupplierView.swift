@@ -13,7 +13,7 @@ protocol SupplierViewDelegate: class {
     func supplierViewDidPressFeedControlButton(supplierView: UserSeriesSupplierView)
 }
 
-class UserSeriesSupplierView: FeedElementSupplierView {
+class UserSeriesSupplierView: UIView {
     
     static var height: CGFloat = 52
     
@@ -40,8 +40,9 @@ class UserSeriesSupplierView: FeedElementSupplierView {
     ///
     ///Mark: Init
     ///
-    override init() {
-        super.init()
+    init() {
+        super.init(frame: .zero)
+        
         backgroundColor = .offWhite
         
         contextLabel = UILabel(frame: CGRect.zero)
@@ -51,7 +52,7 @@ class UserSeriesSupplierView: FeedElementSupplierView {
         contextLabel.numberOfLines = 2
         addSubview(contextLabel)
 
-        feedControlButton = FeedControlButton(frame: .zero)
+        feedControlButton = FeedControlButton()
         feedControlButton.addTarget(self, action: #selector(didPressFeedControlButton), for: .touchUpInside)
         addSubview(feedControlButton)
         
@@ -61,6 +62,10 @@ class UserSeriesSupplierView: FeedElementSupplierView {
         
         contextImages = UIStackView()
         contextImages.spacing = -1 * contextImagesSize
+
+        let imageView = ImageView(frame: CGRect(x: 0, y: 0, width: contextImagesSize, height: contextImagesSize))
+        contextImages.addArrangedSubview(imageView)
+
         addSubview(contextImages)
         
         contextImages.snp.makeConstraints { make in
@@ -88,40 +93,27 @@ class UserSeriesSupplierView: FeedElementSupplierView {
             make.leading.equalToSuperview()
             make.height.equalTo(lineseparatorHeight)
         }
-        
-//        if let users = supplier as? [User] {
-//            setupWithUsers(users: users, feedContext: feedContext)
-//        }
-//
-//        if let series = supplier as? Series {
-//            setupWithSeries(series: series)
-//        }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func prepareForReuse() {
-        for view in contextImages.subviews {
-            view.removeFromSuperview()
-        }
-    }
-    
     func setupWithUsers(users: [User], feedContext: FeedContext) {
         if users != [] {
-            contextLabel.text = ""
+            var contextString = ""
+
             users.enumerated().forEach { (i,user) in
-                if i >= 3 {
-                    return
-                }
-                contextLabel.text = contextLabel.text! + user.fullName()
+
+                // Only supports one user image. Need to update this to support more later.
+                guard let imageView = contextImages.arrangedSubviews.first as? ImageView, i < 3 else { return }
+
+                contextString += user.fullName()
+
                 if i != users.count - 1 {
-                    contextLabel.text = contextLabel.text! + ", "
+                    contextString += ", "
                 }
-                
-                let imageView = ImageView(frame: CGRect(x: 0, y: 0, width: contextImagesSize, height: contextImagesSize))
-                contextImages.addArrangedSubview(imageView)
+
                 layoutContextImageView(imageView: imageView, imageURL: user.imageURL)
             }
             
@@ -133,14 +125,18 @@ class UserSeriesSupplierView: FeedElementSupplierView {
             }
             
             if users.count > 3 {
-                contextLabel.text = contextLabel.text! + ", and " + String(users.count - 3) + " others recommended this \(recommendationType)"
+                contextString += ", and " + String(users.count - 3) + " others recommended this \(recommendationType)"
             } else {
-                contextLabel.text = contextLabel.text! + " recommended this \(recommendationType)"
+                contextString += " recommended this \(recommendationType)"
             }
+
+            contextLabel.text = contextString
         }
     }
     
     func setupWithSeries(series: Series) {
+        contextImages.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
         if series.title != "" {
             contextLabel.text = series.title + " released a new episode"
         }
