@@ -143,6 +143,8 @@
 		FD6F884B1EBF9452004862CA /* FetchUserRecommendationsEndpointRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6F884A1EBF9452004862CA /* FetchUserRecommendationsEndpointRequest.swift */; };
 		FD8F7DFE1DDD36D600DCC511 /* ProfileSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8F7DFD1DDD36D600DCC511 /* ProfileSectionHeaderView.swift */; };
 		FD9421421DB5307B00685E14 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9421411DB5307B00685E14 /* ProfileHeaderView.swift */; };
+		FDBB534F1FC3DA0000B763B8 /* Observable.m in Sources */ = {isa = PBXBuildFile; fileRef = FDBB534E1FC3DA0000B763B8 /* Observable.m */; };
+		FDBB53511FC3DBD100B763B8 /* libobjc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FDBB53501FC3DBD100B763B8 /* libobjc.tbd */; };
 		FDD71F341E801BBE0060BBB0 /* BookmarkTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD71F331E801BBE0060BBB0 /* BookmarkTableViewCell.swift */; };
 		FDE31DF81E79735300A73BDE /* FetchUserByIDEndpointRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE31DF71E79735300A73BDE /* FetchUserByIDEndpointRequest.swift */; };
 		FDE8D6EB1E6FA87C00DF7548 /* InternalProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8D6EA1E6FA87C00DF7548 /* InternalProfileViewController.swift */; };
@@ -327,6 +329,9 @@
 		FD6F884A1EBF9452004862CA /* FetchUserRecommendationsEndpointRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchUserRecommendationsEndpointRequest.swift; sourceTree = "<group>"; };
 		FD8F7DFD1DDD36D600DCC511 /* ProfileSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileSectionHeaderView.swift; sourceTree = "<group>"; };
 		FD9421411DB5307B00685E14 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
+		FDBB534D1FC3DA0000B763B8 /* Observable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Observable.h; sourceTree = "<group>"; };
+		FDBB534E1FC3DA0000B763B8 /* Observable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Observable.m; sourceTree = "<group>"; };
+		FDBB53501FC3DBD100B763B8 /* libobjc.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libobjc.tbd; path = usr/lib/libobjc.tbd; sourceTree = SDKROOT; };
 		FDD71F331E801BBE0060BBB0 /* BookmarkTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookmarkTableViewCell.swift; sourceTree = "<group>"; };
 		FDE31DF71E79735300A73BDE /* FetchUserByIDEndpointRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchUserByIDEndpointRequest.swift; sourceTree = "<group>"; };
 		FDE8D6EA1E6FA87C00DF7548 /* InternalProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternalProfileViewController.swift; sourceTree = "<group>"; };
@@ -346,6 +351,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDBB53511FC3DBD100B763B8 /* libobjc.tbd in Frameworks */,
 				95F55B112EEF0A4C24EE7AA6 /* Pods_Podcast.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,6 +511,7 @@
 		96C3965CDA19CA3F6ED27FE4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FDBB53501FC3DBD100B763B8 /* libobjc.tbd */,
 				FD1941411FB15D44005819E3 /* MediaPlayer.framework */,
 				FD4094C81FA959DF006479EC /* AudioToolbox.framework */,
 				FD5E8A921FA9107C00271791 /* AVFoundation.framework */,
@@ -565,6 +572,8 @@
 				D354024D1E67C224008B8A0C /* SearchSeries.swift */,
 				D354024F1E67C5C4008B8A0C /* Session.swift */,
 				422575161E9DEDE10071E419 /* Comment.swift */,
+				FDBB534D1FC3DA0000B763B8 /* Observable.h */,
+				FDBB534E1FC3DA0000B763B8 /* Observable.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1046,6 +1055,7 @@
 				D3ED2C2F1FAB94AA0004D4F1 /* UnimplementedViewController.swift in Sources */,
 				FD20F5741E52186500721C46 /* SeriesDetailHeaderView.swift in Sources */,
 				425B393D1E512F5D00283CA4 /* PlayerControlsView.swift in Sources */,
+				FDBB534F1FC3DA0000B763B8 /* Observable.m in Sources */,
 				443ED3151E7D93F5001CFFF5 /* SearchEpisodesEndpointRequest.swift in Sources */,
 				D3B9A05A1E861EB800B634FF /* ListeningHistoryTableViewCell.swift in Sources */,
 				44D63F4D1EB5615D00F76C56 /* CreateBookmarkEndpointRequest.swift in Sources */,

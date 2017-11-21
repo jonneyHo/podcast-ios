@@ -1,7 +1,7 @@
 import UIKit
 import NVActivityIndicatorView
 
-class BookmarkViewController: ViewController, EmptyStateTableViewDelegate, UITableViewDelegate, UITableViewDataSource, BookmarkTableViewCellDelegate {
+class BookmarkViewController: ViewController, EmptyStateTableViewDelegate, UITableViewDelegate, UITableViewDataSource, BookmarkTableViewCellDelegate, CacheEpisodeObserver {
     
 
     ///
@@ -126,6 +126,14 @@ class BookmarkViewController: ViewController, EmptyStateTableViewDelegate, UITab
         tabBarController.programmaticallyPressTabBarButton(atIndex: System.discoverTab) //discover index
     }
     
+    func observe(episode: Episode) {
+        // reload cell with episode in it
+        let i = episodes.index(of: episode)
+        if let i = i {
+            bookmarkTableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .none)
+        }
+    }
+    
     //MARK
     //MARK - Endpoint Requests
     //MARK
@@ -136,6 +144,7 @@ class BookmarkViewController: ViewController, EmptyStateTableViewDelegate, UITab
             self.bookmarkTableView.endRefreshing()
             guard let newEpisodes = request.processedResponseValue as? [Episode] else { return }
             self.episodes = newEpisodes
+            Cache.sharedInstance.add(observer: self, forEpisodes: self.episodes)
             self.bookmarkTableView.stopLoadingAnimation()
             self.bookmarkTableView.reloadSections([0] , with: .automatic)
         }

@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyJSON
 
-class Episode: NSObject {
+class Episode: Observable {
     
     // This should not be updated in backend or by endpoints; it is purely for local use
     var isPlaying: Bool = false

@@ -9,6 +9,10 @@
 import UIKit
 import SwiftyJSON
 
+protocol CacheEpisodeObserver {
+    func observe(episode: Episode)
+}
+
 class Cache: NSObject {
     static let sharedInstance = Cache()
     
@@ -18,11 +22,16 @@ class Cache: NSObject {
     private var seriesCache: [String: Series]!
     private var userCache: [String: User]!
     
+    // map episode.id to list of observers
+    private var episodeObservers: [String: [CacheEpisodeObserver]]!
+    
     private override init() {
         // TODO: in future maybe store cache!
         episodeCache = [:]
         seriesCache = [:]
         userCache = [:]
+        
+        episodeObservers = [:]
     }
     
     func reset() {
@@ -44,6 +53,8 @@ class Cache: NSObject {
             return episode
         } else {
             let episode = Episode(json: episodeJson)
+            // So long as each episode only ever added once, and cache lives forever, no need to remove observer (super sketch)
+            episode.addObserver(self, forKeyPath: "masterProperty", options: .new, context: nil)
             episodeCache[id] = episode
             return episode
         }
@@ -84,5 +95,37 @@ class Cache: NSObject {
     
     func get(user id: String) -> User? {
         return userCache[id]
+    }
+    
+    func add(observer: CacheEpisodeObserver, forEpisodes: [Episode]) {
+        for episode in forEpisodes {
+            self.add(observer: observer, forEpisodeId: episode.id)
+        }
+    }
+    
+    func add(observer: CacheEpisodeObserver, forEpisodeId id:String) {
+        let arr = self.episodeObservers[id]
+        if var arr = arr {
+            arr.append(observer)
+        } else {
+            let arr = [observer]
+            self.episodeObservers[id] = arr
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath != nil && keyPath == "masterProperty" {
+            if let episode = object as? Episode {
+                if let observers = episodeObservers[episode.id] {
+                    for observer in observers {
+                        observer.observe(episode: episode)
+                    }
+                }
+            } else if let _ = object as? Series {
+                
+            } else if let _ = object as? User {
+                
+            }
+        }
     }
 }
