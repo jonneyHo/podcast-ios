@@ -90,10 +90,10 @@ class BookmarkViewController: ViewController, EmptyStateTableViewDelegate, UITab
         guard let episodeIndexPath = bookmarkTableView.indexPath(for: bookmarksTableViewCell), episodeIndexPath != currentlyPlayingIndexPath, let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let episode = episodes[episodeIndexPath.row]
         
-        if let indexPath = currentlyPlayingIndexPath, let cell = bookmarkTableView.cellForRow(at: indexPath) as? BookmarkTableViewCell {
-            cell.setPlayButtonToState(isPlaying: false)
-        }
-        currentlyPlayingIndexPath = episodeIndexPath
+//        if let indexPath = currentlyPlayingIndexPath, let cell = bookmarkTableView.cellForRow(at: indexPath) as? BookmarkTableViewCell {
+//            cell.setPlayButtonToState(isPlaying: false)
+//        }
+//        currentlyPlayingIndexPath = episodeIndexPath
         bookmarksTableViewCell.setPlayButtonToState(isPlaying: true)
         appDelegate.showPlayer(animated: true)
         Player.sharedInstance.playEpisode(episode: episode)
