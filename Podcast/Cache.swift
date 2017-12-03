@@ -11,6 +11,7 @@ import SwiftyJSON
 
 protocol CacheEpisodeObserver {
     func observe(episode: Episode)
+    func equals(_ observer: CacheEpisodeObserver) -> Bool
 }
 
 class Cache: NSObject {
@@ -106,10 +107,28 @@ class Cache: NSObject {
     func add(observer: CacheEpisodeObserver, forEpisodeId id:String) {
         let arr = self.episodeObservers[id]
         if var arr = arr {
-            arr.append(observer)
+            if (!arr.contains(where: { item in item.equals(observer)})) {
+                arr.append(observer)
+            }
         } else {
             let arr = [observer]
             self.episodeObservers[id] = arr
+        }
+    }
+    
+    func remove(observer: CacheEpisodeObserver, forEpisodes: [Episode]) {
+        for episode in forEpisodes {
+            self.remove(observer: observer, forEpisodeId: episode.id)
+        }
+    }
+    
+    func remove(observer: CacheEpisodeObserver, forEpisodeId id:String) {
+        let arr = self.episodeObservers[id]
+        if var arr = arr {
+            let i = arr.index(where: { item in item.equals(observer)})
+            if let i = i {
+                arr.remove(at: i)
+            }
         }
     }
     
